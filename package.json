@@ -5,7 +5,7 @@
   "type": "module",
   "description": "ArduinoMyHealth \u2014 API and dashboard for the Catcher Device",
   "engines": {
-    "node": ">=20"
+    "node": ">=20 <27"
   },
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",

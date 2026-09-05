@@ -1,7 +1,8 @@
 # ArduinoMyHealth — frontend
 
-React + Vite. Built entirely against the mock fixtures in `src/mock.js`, per
-**API Contract v1**. No backend is required to run it.
+React + Vite, per **API Contract v1**. It now runs against the live API; the
+mock fixtures in `src/mock.js` remain so the whole app can be worked on with no
+backend running.
 
 ```bash
 npm install
@@ -9,12 +10,12 @@ npm run dev      # http://localhost:5173
 npm run build    # → dist/, served by Express in production
 ```
 
-## Switching to the real backend
+## Mock mode
 
-One line, in `src/api.js`:
+`src/api.js` decides where data comes from:
 
 ```js
-export const MOCK = false;
+export const MOCK = false;   // live API  ->  set true for fixtures
 ```
 
 Nothing else changes. Every page and component only ever sees the shapes the
@@ -24,10 +25,10 @@ build works on localhost, on Render, and on the client's own domain.
 In dev, `vite.config.js` proxies `/api` to `http://localhost:3000` so relative
 paths work before `dist/` is being served by Express.
 
-## Demo account (while `MOCK = true`)
+## Accounts
 
-`juan@example.com` / `password123`. Registering creates an extra account in
-`localStorage`; clearing site data resets everything to the seed.
+Live: register on the site. With `MOCK = true`, a fixture account
+`juan@example.com` / `password123` is served from `localStorage` instead.
 
 ## Layout
 

@@ -17,6 +17,16 @@ export const IS_PRODUCTION =
 const COOKIE_NAME = 'session';
 const MAX_AGE_DAYS = 7;
 
+// Both the browser cookie and the Catcher's session token are JWTs signed with
+// the same secret, so each one states what it is and every reader checks.
+// Without this, a 15-minute keypad token pasted into a cookie would be accepted
+// as a 7-day browser login, and vice versa.
+const KIND_WEB = 'web';
+const KIND_DEVICE = 'device';
+
+/** Contract: keypad sessions expire after 15 minutes. */
+const DEVICE_TOKEN_TTL = '15m';
+
 const configuredSecret = process.env.JWT_SECRET?.trim();
 export const jwtSecretConfigured = Boolean(configuredSecret);
 
@@ -45,7 +55,9 @@ function cookieOptions() {
 }
 
 export function startSession(res, userId) {
-  const token = jwt.sign({ uid: userId }, secret, { expiresIn: `${MAX_AGE_DAYS}d` });
+  const token = jwt.sign({ uid: userId, kind: KIND_WEB }, secret, {
+    expiresIn: `${MAX_AGE_DAYS}d`,
+  });
   res.cookie(COOKIE_NAME, token, cookieOptions());
 }
 
@@ -59,7 +71,9 @@ export function readSession(req) {
   const token = req.cookies?.[COOKIE_NAME];
   if (!token) return null;
   try {
-    return jwt.verify(token, secret).uid ?? null;
+    const claims = jwt.verify(token, secret);
+    if (claims.kind !== KIND_WEB) return null; // a device token is not a login
+    return claims.uid ?? null;
   } catch {
     return null; // expired, tampered with, or signed by a previous secret
   }
@@ -71,4 +85,33 @@ export function requireAuth(req, res, next) {
   if (!userId) return res.status(401).json({ error: 'unauthenticated' });
   req.userId = userId;
   next();
+}
+
+// --------------------------------------------------------------- device ----
+
+/**
+ * Mint the token the Catcher holds in RAM while one person is measuring.
+ *
+ * Short-lived by design. It lives only in RAM on the device, so a power cut logs
+ * everyone out — the correct behaviour for a shared medical terminal, and the
+ * reason readings cannot be misattributed to whoever used it last.
+ */
+export function signDeviceToken(userId) {
+  return jwt.sign({ uid: userId, kind: KIND_DEVICE }, secret, {
+    expiresIn: DEVICE_TOKEN_TTL,
+  });
+}
+
+/** The user id behind an Authorization: Bearer token, or null. */
+export function readDeviceToken(req) {
+  const header = req.get('authorization') ?? '';
+  const match = /^Bearer\s+(.+)$/i.exec(header.trim());
+  if (!match) return null;
+  try {
+    const claims = jwt.verify(match[1], secret);
+    if (claims.kind !== KIND_DEVICE) return null; // a browser cookie is not a device session
+    return claims.uid ?? null;
+  } catch {
+    return null; // expired (15 min), tampered with, or from a previous secret
+  }
 }

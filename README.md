@@ -84,12 +84,23 @@ Do **not** set `PORT` — Render provides it.
 
 ## Status
 
-Done: the dashboard (`web/`), built against the frozen API contract with mock
-fixtures, and this deploy skeleton with `/api/health`.
+Done: the dashboard, the deploy skeleton, all website endpoints, all Catcher
+endpoints, and the seed and fake-device scripts. The frontend runs on the live
+API (`MOCK = false`).
 
-Next: `register` / `login` / `logout` / `me`, then the Catcher endpoints
-(`session/login`, `readings`, `device/heartbeat`), then the seed and fake-device
-scripts, then firmware v4.
+Next: firmware v4 — WiFiManager, the device key in NVS, two-step keypad login,
+HTTPS POST, ~2-minute idle logout, 10-minute heartbeat, and the four firmware
+correctness fixes.
 
-When the auth routes land, flip `MOCK = false` in `web/src/api.js` — that one
-line is the whole switch from fixtures to the live API.
+## Scripts
+
+```bash
+# 30 days of plausible history for an existing account
+node --env-file-if-exists=.env scripts/seed.js --email you@example.com --days 30 --clear
+
+# a Catcher Device made of Node: keypad login, readings every 15s, heartbeat
+node --env-file-if-exists=.env scripts/fake-device.js --code 622701 --pin 4821
+```
+
+`fake-device.js` speaks the exact protocol the ESP32 will speak, so the
+endpoints have been taking traffic long before any hardware does.

@@ -4,9 +4,8 @@
 // One service is deliberate: no CORS, one URL, one deploy, and it fits Render's
 // free instance-hour allowance, which covers exactly one always-on service.
 //
-// Mounted so far: /api/health, the auth routes, and the browser's readings
-// query. The Catcher's own endpoints (session/login, readings ingest,
-// heartbeat) land next.
+// Mounted: /api/health, the browser's auth and readings routes, and the
+// Catcher's own endpoints (session/login, readings ingest, heartbeat).
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,6 +14,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import { describeDatabase, initSchema, pingDatabase, usingLocalFallback } from './db.js';
 import { authRoutes } from './routes/auth.js';
+import { deviceKeyConfigured, deviceRoutes } from './routes/device.js';
 import { readingsRoutes } from './routes/readings.js';
 import { jwtSecretConfigured } from './session.js';
 
@@ -52,6 +52,7 @@ app.get('/api/health', async (req, res) => {
     database: describeDatabase(),
     frontendBuilt: fs.existsSync(INDEX_HTML),
     jwtSecret: jwtSecretConfigured ? 'configured' : 'missing',
+    deviceKey: deviceKeyConfigured ? 'configured' : 'missing',
   };
   try {
     await pingDatabase();
@@ -64,6 +65,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.use('/api', authRoutes);
+app.use('/api', deviceRoutes);
 app.use('/api', readingsRoutes);
 
 // Unknown /api/* must never fall through to the SPA — an API typo should be a
