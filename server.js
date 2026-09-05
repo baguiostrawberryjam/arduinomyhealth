@@ -4,14 +4,19 @@
 // One service is deliberate: no CORS, one URL, one deploy, and it fits Render's
 // free instance-hour allowance, which covers exactly one always-on service.
 //
-// Right now this is the deploy skeleton: /api/health plus static hosting. The
-// auth, session and readings routes land next, under /api.
+// Mounted so far: /api/health, the auth routes, and the browser's readings
+// query. The Catcher's own endpoints (session/login, readings ingest,
+// heartbeat) land next.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import { describeDatabase, initSchema, pingDatabase, usingLocalFallback } from './db.js';
+import { authRoutes } from './routes/auth.js';
+import { readingsRoutes } from './routes/readings.js';
+import { jwtSecretConfigured } from './session.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.join(here, 'web', 'dist');
@@ -27,6 +32,7 @@ app.disable('x-powered-by');
 // the auth cookie would never get its Secure flag set.
 app.set('trust proxy', 1);
 app.use(express.json({ limit: '16kb' }));
+app.use(cookieParser());
 
 // ---------------------------------------------------------------- API ------
 
@@ -45,6 +51,7 @@ app.get('/api/health', async (req, res) => {
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     database: describeDatabase(),
     frontendBuilt: fs.existsSync(INDEX_HTML),
+    jwtSecret: jwtSecretConfigured ? 'configured' : 'missing',
   };
   try {
     await pingDatabase();
@@ -56,10 +63,21 @@ app.get('/api/health', async (req, res) => {
   res.json(body);
 });
 
+app.use('/api', authRoutes);
+app.use('/api', readingsRoutes);
+
 // Unknown /api/* must never fall through to the SPA — an API typo should be a
 // JSON 404, not a 200 with an HTML page that the frontend then fails to parse.
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'not_found' });
+});
+
+// Any route that calls next(err) lands here. Log the detail, return none of
+// it — an error message can leak a query or a column name.
+app.use('/api', (err, req, res, next) => {
+  console.error(`  ${req.method} ${req.originalUrl} failed:`, err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: 'server_error' });
 });
 
 // ----------------------------------------------------------- frontend ------

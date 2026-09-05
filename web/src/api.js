@@ -7,7 +7,7 @@
 // false when the backend is live; that is the only line that changes.
 import { MOCK_ME, mockRows } from './mock.js';
 
-export const MOCK = true;
+export const MOCK = false;
 
 export class ApiError extends Error {
   constructor(code, status) {
@@ -23,6 +23,8 @@ const MESSAGES = {
   invalid_credentials: 'Email or password is incorrect.',
   unauthenticated: 'Your session has expired. Please log in again.',
   too_many_attempts: 'Too many attempts. Please wait a moment and try again.',
+  invalid_input: 'Please check the details you entered and try again.',
+  server_error: 'Something went wrong on our end. Please try again in a moment.',
   network: 'Could not reach the server. Check your connection and try again.',
 };
 
