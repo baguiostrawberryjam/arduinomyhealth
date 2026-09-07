@@ -16,14 +16,22 @@ import { requireAuth } from '../session.js';
 
 export const adminRoutes = Router();
 
+const rawAdminEmails = process.env.ADMIN_EMAILS ?? '';
+
 const adminEmails = new Set(
-  (process.env.ADMIN_EMAILS ?? '')
+  rawAdminEmails
     .split(',')
-    .map((e) => e.trim().toLowerCase())
+    // Quotes are stripped because a dashboard's environment editor takes the
+    // value literally: pasting "you@example.com" with the quotes stores them,
+    // and the address then matches nothing with no indication why.
+    .map((e) => e.trim().replace(/^["']|["']$/g, '').trim().toLowerCase())
     .filter(Boolean)
 );
 
 export const adminCount = adminEmails.size;
+
+/** For /api/health: tells "variable missing" apart from "variable unusable". */
+export const adminEmailsSet = rawAdminEmails.trim().length > 0;
 
 export function isAdminEmail(email) {
   return adminEmails.has(String(email ?? '').trim().toLowerCase());

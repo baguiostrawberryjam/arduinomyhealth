@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { describeDatabase, initSchema, pingDatabase, usingLocalFallback } from './db.js';
-import { adminCount, adminRoutes } from './routes/admin.js';
+import { adminCount, adminEmailsSet, adminRoutes } from './routes/admin.js';
 import { authRoutes } from './routes/auth.js';
 import { deviceKeyConfigured, deviceRoutes } from './routes/device.js';
 import { readingsRoutes } from './routes/readings.js';
@@ -56,6 +56,9 @@ app.get('/api/health', async (req, res) => {
     jwtSecret: jwtSecretConfigured ? 'configured' : 'missing',
     deviceKey: deviceKeyConfigured ? 'configured' : 'missing',
     admins: adminCount,
+    // Set but zero admins means ADMIN_EMAILS is present and nothing in it
+    // parsed — a typo or stray punctuation, not a missing variable.
+    adminEmails: adminEmailsSet ? 'set' : 'unset',
   };
   try {
     await pingDatabase();
@@ -130,6 +133,8 @@ async function start() {
   if (!fs.existsSync(INDEX_HTML)) {
     console.warn('  frontend not built — web/dist is missing, API only');
   }
+
+  console.log(`  admins: ${adminCount} (ADMIN_EMAILS ${adminEmailsSet ? 'set' : 'unset'})`);
 
   app.listen(PORT, () => {
     console.log(`  ArduinoMyHealth listening on http://localhost:${PORT}`);

@@ -65,7 +65,8 @@ Do **not** set `PORT` — Render provides it.
 `GET /api/health` reports the process and the database separately:
 
 ```json
-{ "ok": true, "database": "turso", "db": "ok", "frontendBuilt": true }
+{ "ok": true, "database": "turso", "db": "ok", "frontendBuilt": true,
+  "admins": 1, "adminEmails": "set" }
 ```
 
 - `db: "error"` with the service still up means Node is fine and the Turso
@@ -75,6 +76,10 @@ Do **not** set `PORT` — Render provides it.
   Render's filesystem is ephemeral, so every reading would be lost on the next
   deploy. The boot log warns loudly about this.
 - `frontendBuilt: false` means the build command did not produce `web/dist`.
+- `adminEmails: "unset"` means `ADMIN_EMAILS` never reached the process — it was
+  not saved, it is on another service, or the name is misspelled. `"set"` with
+  `admins: 0` is the opposite problem: the variable is there and nothing in it
+  parsed. Either way the site works; `/admin` just belongs to nobody.
 
 ### Free-tier notes
 
