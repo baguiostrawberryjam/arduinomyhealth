@@ -10,6 +10,7 @@ health-monitor/
 ├── db.js           libSQL client (Turso, or a local file for development)
 ├── schema.sql      CREATE TABLE IF NOT EXISTS, run on every boot
 ├── web/            Vite React dashboard (its own package.json)
+├── firmware/       Catcher Device sketch (ESP32) — see firmware/README.md
 └── .env.example
 ```
 
