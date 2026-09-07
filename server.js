@@ -4,8 +4,9 @@
 // One service is deliberate: no CORS, one URL, one deploy, and it fits Render's
 // free instance-hour allowance, which covers exactly one always-on service.
 //
-// Mounted: /api/health, the browser's auth and readings routes, and the
-// Catcher's own endpoints (session/login, readings ingest, heartbeat).
+// Mounted: /api/health, the browser's auth and readings routes, the Catcher's
+// own endpoints (session/login, readings ingest, heartbeat), and the read-only
+// admin routes.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { describeDatabase, initSchema, pingDatabase, usingLocalFallback } from './db.js';
+import { adminCount, adminRoutes } from './routes/admin.js';
 import { authRoutes } from './routes/auth.js';
 import { deviceKeyConfigured, deviceRoutes } from './routes/device.js';
 import { readingsRoutes } from './routes/readings.js';
@@ -53,6 +55,7 @@ app.get('/api/health', async (req, res) => {
     frontendBuilt: fs.existsSync(INDEX_HTML),
     jwtSecret: jwtSecretConfigured ? 'configured' : 'missing',
     deviceKey: deviceKeyConfigured ? 'configured' : 'missing',
+    admins: adminCount,
   };
   try {
     await pingDatabase();
@@ -67,6 +70,7 @@ app.get('/api/health', async (req, res) => {
 app.use('/api', authRoutes);
 app.use('/api', deviceRoutes);
 app.use('/api', readingsRoutes);
+app.use('/api', adminRoutes);
 
 // Unknown /api/* must never fall through to the SPA — an API typo should be a
 // JSON 404, not a 200 with an HTML page that the frontend then fails to parse.

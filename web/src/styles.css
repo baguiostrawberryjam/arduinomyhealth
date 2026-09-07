@@ -1311,3 +1311,68 @@ table.readings tbody tr:hover td {
     text-align: center;
   }
 }
+
+/* ---------------------------------------------------------------- admin -- */
+
+.backlink {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.backlink:hover {
+  text-decoration: underline;
+}
+
+.row-link {
+  cursor: pointer;
+}
+
+.users-table .muted-cell {
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+.tag {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  color: var(--text-faint);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+/* The identity panel that replaces the Catcher instructions when an admin is
+   looking at someone else's dashboard. */
+.account-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px 24px;
+}
+
+.account-facts dt {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.account-facts dd {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.account-facts .mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

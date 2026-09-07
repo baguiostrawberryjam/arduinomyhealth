@@ -15,6 +15,7 @@ import bcrypt from 'bcryptjs';
 import rateLimit from 'express-rate-limit';
 import { db } from '../db.js';
 import { endSession, readSession, requireAuth, startSession } from '../session.js';
+import { isAdminEmail } from './admin.js';
 
 export const authRoutes = Router();
 
@@ -165,6 +166,10 @@ authRoutes.get('/me', requireAuth, async (req, res, next) => {
       name: user.name,
       email: user.email,
       userCode: user.user_code,
+      // Decides whether the browser shows the admin link at all. The endpoints
+      // check for themselves; this is only so the UI does not offer a door that
+      // would answer 403.
+      isAdmin: isAdminEmail(user.email),
       deviceOnline,
       deviceLastSeenAt: lastSeenAt,
     });

@@ -4,8 +4,15 @@ import { navigate, usePath } from './router.js';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import AdminUsers from './pages/AdminUsers.jsx';
 
 const PUBLIC_PATHS = ['/login', '/register'];
+
+/** /admin/user/5 -> 5. Any other path -> null. */
+function adminUserId(path) {
+  const match = /^\/admin\/user\/(\d+)$/.exec(path);
+  return match ? Number(match[1]) : null;
+}
 
 export default function App() {
   const path = usePath();
@@ -39,6 +46,7 @@ export default function App() {
     const isPublic = PUBLIC_PATHS.includes(path);
     if (me && isPublic) navigate('/', { replace: true });
     else if (!me && !isPublic) navigate('/login', { replace: true });
+    else if (me && !me.isAdmin && path.startsWith('/admin')) navigate('/', { replace: true });
   }, [booting, me, path]);
 
   const handleLogout = useCallback(async () => {
@@ -65,6 +73,12 @@ export default function App() {
     ) : (
       <Login onAuthenticated={refreshMe} />
     );
+  }
+
+  // The endpoints check admin rights for themselves; this only keeps a
+  // non-admin who typed /admin from staring at a page that can only 403.
+  if (path.startsWith('/admin') && me.isAdmin) {
+    return <AdminUsers me={me} onLogout={handleLogout} viewUserId={adminUserId(path)} />;
   }
 
   return <Dashboard me={me} onLogout={handleLogout} />;

@@ -52,6 +52,12 @@ Environment variables — all four, before the first deploy:
 | `JWT_SECRET` | Any long random string; signs the browser session cookie |
 | `DEVICE_KEY` | Any long random string; also entered into the Catcher's WiFi portal |
 
+Optional:
+
+| Variable | Where it comes from |
+| :--- | :--- |
+| `ADMIN_EMAILS` | Comma-separated emails that may open `/admin`. Blank means nobody. |
+
 Do **not** set `PORT` — Render provides it.
 
 ### Checking a deploy
@@ -83,15 +89,29 @@ Do **not** set `PORT` — Render provides it.
   days**. Turso is the database, and its free plan (5 GB, 500M row reads/month)
   is far beyond this project's few thousand rows.
 
+## The admin view
+
+`/admin` lists every account — name, email, User ID, how many readings they have
+and when the last one arrived — and selecting a name opens that person's
+dashboard, the same page with the same charts, table, zoom and CSV.
+
+Who may see it is the `ADMIN_EMAILS` environment variable, a comma-separated
+list, rather than a column on `users`. A role column would mean a migration plus
+a way to grant and revoke it, for a system whose one or two admins are known
+before the deploy. The account has to already exist: register on the site
+normally, then add that email to `ADMIN_EMAILS` and restart.
+
+The list is read-only. There is no editing, no deletion, no impersonation, and
+no way to reach the keypad as somebody else — an admin reads, and that is all.
+Both endpoints check for themselves, so the `isAdmin` flag on `/api/me` only
+decides whether the browser bothers to show the link.
+
 ## Status
 
 Done: the dashboard, the deploy skeleton, all website endpoints, all Catcher
-endpoints, and the seed and fake-device scripts. The frontend runs on the live
-API (`MOCK = false`).
-
-Next: firmware v4 — WiFiManager, the device key in NVS, two-step keypad login,
-HTTPS POST, ~2-minute idle logout, 10-minute heartbeat, and the four firmware
-correctness fixes.
+endpoints, the admin view, the seed and fake-device scripts, and Catcher Device
+firmware v4. The frontend runs on the live API (`MOCK = false`), and the
+hardware has been verified end to end.
 
 ## Scripts
 

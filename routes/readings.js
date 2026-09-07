@@ -5,11 +5,16 @@
 // This single endpoint feeds all four dashboard surfaces: the stat cards, the
 // three charts, the table, and the CSV. One fetch, one loading state.
 //
+// An admin may add &userId= to read someone else's readings, which is what lets
+// the admin view reuse the whole dashboard unchanged. Anyone else asking for an
+// id that is not their own gets 403.
+//
 // POST /api/readings (the Catcher's ingest) lands next, with the device routes.
 
 import { Router } from 'express';
 import { db } from '../db.js';
 import { requireAuth } from '../session.js';
+import { isAdminUser } from './admin.js';
 
 export const readingsRoutes = Router();
 
@@ -30,6 +35,19 @@ readingsRoutes.get('/readings', requireAuth, async (req, res, next) => {
   const since = new Date(Date.now() - span).toISOString();
 
   try {
+    // Whose readings. Defaults to the caller; an admin may name someone else.
+    let targetId = req.userId;
+    if (req.query.userId !== undefined) {
+      const requested = Number(req.query.userId);
+      if (!Number.isInteger(requested) || requested <= 0) {
+        return res.status(400).json({ error: 'invalid_input' });
+      }
+      if (requested !== req.userId && !(await isAdminUser(req.userId))) {
+        return res.status(403).json({ error: 'forbidden' });
+      }
+      targetId = requested;
+    }
+
     // Ordered DESC so LIMIT keeps the *newest* 5000 rather than the oldest,
     // then reversed, because the contract promises ascending rows. Doing it the
     // other way round would silently drop today's readings on a busy account.
@@ -39,7 +57,7 @@ readingsRoutes.get('/readings', requireAuth, async (req, res, next) => {
              WHERE user_id = ? AND recorded_at >= ?
           ORDER BY recorded_at DESC, id DESC
              LIMIT ?`,
-      args: [req.userId, since, MAX_ROWS],
+      args: [targetId, since, MAX_ROWS],
     });
 
     const rows = result.rows

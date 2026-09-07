@@ -88,7 +88,9 @@ export function downloadCsv(text, filename) {
   URL.revokeObjectURL(url);
 }
 
-export function csvFilename(range) {
+/** `userCode` is only passed from the admin view, so downloads stay apart. */
+export function csvFilename(range, userCode) {
   const stamp = new Date().toLocaleDateString('en-CA', TZ);
-  return `health-readings-${range}-${stamp}.csv`;
+  const who = userCode ? `-${userCode}` : '';
+  return `health-readings${who}-${range}-${stamp}.csv`;
 }

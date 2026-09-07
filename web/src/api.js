@@ -24,6 +24,7 @@ const MESSAGES = {
   unauthenticated: 'Your session has expired. Please log in again.',
   too_many_attempts: 'Too many attempts. Please wait a moment and try again.',
   invalid_input: 'Please check the details you entered and try again.',
+  forbidden: 'You do not have access to that.',
   server_error: 'Something went wrong on our end. Please try again in a moment.',
   network: 'Could not reach the server. Check your connection and try again.',
 };
@@ -175,6 +176,23 @@ const mockApi = {
     // Contract: ascending, capped at the 5000 most recent rows.
     return { range, rows: rowCache.get(range).slice(-5000) };
   },
+
+  async adminUsers() {
+    await sleep(400);
+    if (!readSessionId()) throw new ApiError('unauthenticated', 401);
+    return {
+      users: readStore().map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        userCode: u.userCode,
+        createdAt: new Date(Date.now() - 30 * 864e5).toISOString(),
+        readingCount: 0,
+        lastReadingAt: null,
+        isAdmin: false,
+      })),
+    };
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -192,8 +210,17 @@ export const api = {
 
   me: () => (MOCK ? mockApi.me() : request('/api/me')),
 
-  readings: (range) =>
-    MOCK ? mockApi.readings(range) : request(`/api/readings?range=${encodeURIComponent(range)}`),
+  // userId is the admin case: read someone else's readings. Omitted, the server
+  // answers for whoever is logged in, which is every non-admin call.
+  readings: (range, userId) =>
+    MOCK
+      ? mockApi.readings(range)
+      : request(
+          `/api/readings?range=${encodeURIComponent(range)}` +
+            (userId ? `&userId=${encodeURIComponent(userId)}` : '')
+        ),
+
+  adminUsers: () => (MOCK ? mockApi.adminUsers() : request('/api/admin/users')),
 };
 
 /** Shown on the login page while MOCK is on, so the demo account is discoverable. */

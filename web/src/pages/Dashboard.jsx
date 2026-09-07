@@ -3,6 +3,7 @@ import { api, errorMessage, MOCK } from '../api.js';
 import { LAYOUT } from '../config.js';
 import { METRICS, RANGES } from '../constants.js';
 import { buildCsv, csvFilename, downloadCsv, formatDateTime } from '../format.js';
+import { navigate } from '../router.js';
 import { thinRows } from '../series.js';
 import Brand from '../components/Brand.jsx';
 import DeviceStatus from '../components/DeviceStatus.jsx';
@@ -18,7 +19,16 @@ const TABS = [
   { key: 'trends', label: 'Trends & Readings' },
 ];
 
-export default function Dashboard({ me, onLogout }) {
+/**
+ * The readings dashboard.
+ *
+ * `viewUser` is the admin case: the same page, reading somebody else's data.
+ * Everything below is unchanged by it except whose readings are fetched, the
+ * heading, and the "how to use the Catcher" panel — which is written in the
+ * second person and belongs to the person it is about, not to an admin
+ * looking in.
+ */
+export default function Dashboard({ me, onLogout, viewUser = null }) {
   const [range, setRange] = useState('24h');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +47,7 @@ export default function Dashboard({ me, onLogout }) {
     setError(null);
 
     api
-      .readings(range)
+      .readings(range, viewUser?.id)
       .then((data) => {
         if (!cancelled) setRows(data.rows);
       })
@@ -54,12 +64,12 @@ export default function Dashboard({ me, onLogout }) {
     return () => {
       cancelled = true;
     };
-  }, [range, reloadKey]);
+  }, [range, reloadKey, viewUser?.id]);
 
   // A zoom window belongs to the range it was drawn on.
   useEffect(() => {
     setZoom(null);
-  }, [range, reloadKey]);
+  }, [range, reloadKey, viewUser?.id]);
 
   // Contract: rows is ascending, so the newest reading is the last one. The
   // cards always show the latest reading in the range, never the latest inside
@@ -84,7 +94,7 @@ export default function Dashboard({ me, onLogout }) {
   const handleZoom = useCallback((next) => setZoom(next), []);
 
   function handleDownload() {
-    downloadCsv(buildCsv(rows), csvFilename(range));
+    downloadCsv(buildCsv(rows), csvFilename(range, viewUser?.userCode));
   }
 
   const tabbed = LAYOUT === 'tabs';
@@ -115,10 +125,31 @@ export default function Dashboard({ me, onLogout }) {
       <section className="section" aria-labelledby="device-heading">
         <div className="section-head">
           <h2 className="section-title" id="device-heading">
-            Using the Catcher Device
+            {viewUser ? 'Account' : 'Using the Catcher Device'}
           </h2>
         </div>
-        <UserCodeCard userCode={me.userCode} deviceOnline={me.deviceOnline} />
+        {viewUser ? (
+          <dl className="card card-pad account-facts">
+            <div>
+              <dt>Name</dt>
+              <dd>{viewUser.name}</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd>{viewUser.email}</dd>
+            </div>
+            <div>
+              <dt>User ID</dt>
+              <dd className="mono">{viewUser.userCode}</dd>
+            </div>
+            <div>
+              <dt>Readings in range</dt>
+              <dd className="mono">{loading ? '—' : rows.length.toLocaleString()}</dd>
+            </div>
+          </dl>
+        ) : (
+          <UserCodeCard userCode={me.userCode} deviceOnline={me.deviceOnline} />
+        )}
       </section>
     </>
   );
@@ -187,6 +218,11 @@ export default function Dashboard({ me, onLogout }) {
         <div className="topbar-inner">
           <Brand />
           <div className="topbar-right">
+            {me.isAdmin && (
+              <button type="button" className="btn btn-ghost" onClick={() => navigate('/admin')}>
+                Admin
+              </button>
+            )}
             <span className="topbar-user">{me.name}</span>
             <button type="button" className="btn btn-ghost" onClick={onLogout}>
               Log out
@@ -198,7 +234,12 @@ export default function Dashboard({ me, onLogout }) {
       <main className="container">
         <div className="page-head">
           <div>
-            <h1 className="page-title">Your readings</h1>
+            {viewUser && (
+              <button type="button" className="linkbtn backlink" onClick={() => navigate('/admin')}>
+                &larr; All users
+              </button>
+            )}
+            <h1 className="page-title">{viewUser ? viewUser.name : 'Your readings'}</h1>
             <div className="head-meta">
               <DeviceStatus online={me.deviceOnline} lastSeenAt={me.deviceLastSeenAt} />
               <span className="page-sub">Last {rangeLabel}</span>

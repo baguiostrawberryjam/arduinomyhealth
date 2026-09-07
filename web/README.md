@@ -39,7 +39,18 @@ Live: register on the site. With `MOCK = true`, a fixture account
 | `constants.js` | thresholds shared with firmware + backend, and the per-metric config |
 | `series.js` | chart thinning and **gap detection** — see below |
 | `format.js` | Manila timestamps and CSV building |
-| `router.js` | ~20-line router (three pages; react-router isn't a dependency) |
+| `router.js` | ~20-line router (react-router isn't a dependency) |
+
+## The admin view
+
+`pages/AdminUsers.jsx` serves both `/admin` and `/admin/user/:id`. It holds the
+list of users, and when the URL names one it renders `Dashboard` with a
+`viewUser` prop instead. Keeping both routes in one component means the single
+`/api/admin/users` query answers both screens, and a hard refresh straight onto
+a user still has the name and User ID it needs to render.
+
+Nothing else was added: the stat cards, the three charts, the table, the range
+control, the tabs, the drag-to-zoom and the CSV all work there unchanged.
 
 ## The one thing not to break
 
