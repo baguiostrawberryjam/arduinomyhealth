@@ -111,6 +111,22 @@ no way to reach the keypad as somebody else — an admin reads, and that is all.
 Both endpoints check for themselves, so the `isAdmin` flag on `/api/me` only
 decides whether the browser bothers to show the link.
 
+Admins are equal — there is no hierarchy in the code. If you keep a "master"
+account and a second one you intend to throw away, that distinction is yours,
+not the system's, and nothing about deleting one can reach the other: they are
+separate rows behind a unique email index, `ADMIN_EMAILS` is a plain list, and a
+session cookie carries only its own user id.
+
+### Removing an admin
+
+Two different things, and usually you only want the first:
+
+- **Take away admin rights** — remove the address from `ADMIN_EMAILS` and save.
+  It applies on the next request, not whenever their cookie expires. The account
+  and its readings are untouched.
+- **Delete the account entirely** — `scripts/delete-user.js`, below. This also
+  deletes that person's readings, and cannot be undone.
+
 ## Status
 
 Done: the dashboard, the deploy skeleton, all website endpoints, all Catcher
@@ -126,7 +142,17 @@ node --env-file-if-exists=.env scripts/seed.js --email you@example.com --days 30
 
 # a Catcher Device made of Node: keypad login, readings every 15s, heartbeat
 node --env-file-if-exists=.env scripts/fake-device.js --code 622701 --pin 4821
+
+# delete an account and its readings — shows what it would remove and stops
+node --env-file-if-exists=.env scripts/delete-user.js --email someone@example.com
+node --env-file-if-exists=.env scripts/delete-user.js --email someone@example.com --yes
 ```
+
+`delete-user.js` is a terminal script rather than a button in the admin view on
+purpose: a screen that can erase somebody's history is a screen that eventually
+gets clicked by accident. It matches on email so a typo finds nobody instead of
+finding the wrong person, and it refuses to delete the last remaining admin, so
+no sequence of commands can lock you out of `/admin`.
 
 `fake-device.js` speaks the exact protocol the ESP32 will speak, so the
 endpoints have been taking traffic long before any hardware does.
