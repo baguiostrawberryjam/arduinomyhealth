@@ -66,7 +66,7 @@ export default function Register({ onAuthenticated }) {
         <h1 className="auth-title">Create your account</h1>
         <p className="auth-sub">
           You will get a 6-digit User ID. That, plus the PIN you choose here, is what you type at
-          the Catcher Device.
+          the VitaLink Device.
         </p>
 
         {error && (
@@ -105,7 +105,7 @@ export default function Register({ onAuthenticated }) {
           />
           <Field
             id="pin"
-            label="Catcher PIN"
+            label="Device PIN"
             className="field-pin"
             type="password"
             inputMode="numeric"
@@ -113,7 +113,7 @@ export default function Register({ onAuthenticated }) {
             maxLength={4}
             value={form.pin}
             autoComplete="off"
-            hint="4 digits. You type this on the Catcher Device keypad, so keep it memorable."
+            hint="4 digits. You type this on the VitaLink Device keypad, so keep it memorable."
             error={errors.pin}
             onChange={set('pin')}
           />

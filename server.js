@@ -1,12 +1,12 @@
-// ArduinoMyHealth — one Express process serving both the REST API and the built
+// VitaLink — one Express process serving both the REST API and the built
 // React dashboard.
 //
 // One service is deliberate: no CORS, one URL, one deploy, and it fits Render's
 // free instance-hour allowance, which covers exactly one always-on service.
 //
-// Mounted: /api/health, the browser's auth and readings routes, the Catcher's
-// own endpoints (session/login, readings ingest, heartbeat), and the read-only
-// admin routes.
+// Mounted: /api/health, the browser's auth and readings routes, the VitaLink
+// Device's own endpoints (session/login, readings ingest, heartbeat), and the
+// read-only admin routes.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -49,7 +49,7 @@ app.use(cookieParser());
 app.get('/api/health', async (req, res) => {
   const body = {
     ok: true,
-    service: 'arduinomyhealth',
+    service: 'vitalink',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     database: describeDatabase(),
     frontendBuilt: fs.existsSync(INDEX_HTML),
@@ -137,7 +137,7 @@ async function start() {
   console.log(`  admins: ${adminCount} (ADMIN_EMAILS ${adminEmailsSet ? 'set' : 'unset'})`);
 
   app.listen(PORT, () => {
-    console.log(`  ArduinoMyHealth listening on http://localhost:${PORT}`);
+    console.log(`  VitaLink listening on http://localhost:${PORT}`);
   });
 }
 

@@ -1,5 +1,5 @@
 // Shared constants — identical in firmware, backend, and frontend.
-// API Contract v1. Do not diverge; the Catcher Device shows the same warnings.
+// API Contract v1. Do not diverge; the VitaLink Device shows the same warnings.
 export const TEMP_HIGH = 37.5; // °C
 export const BPM_LOW = 60;
 export const BPM_HIGH = 100;

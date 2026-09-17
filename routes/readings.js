@@ -9,7 +9,7 @@
 // the admin view reuse the whole dashboard unchanged. Anyone else asking for an
 // id that is not their own gets 403.
 //
-// POST /api/readings (the Catcher's ingest) lands next, with the device routes.
+// POST /api/readings (the VitaLink Device's ingest) lands next, with the device routes.
 
 import { Router } from 'express';
 import { db } from '../db.js';

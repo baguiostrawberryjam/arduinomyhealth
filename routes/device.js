@@ -1,4 +1,4 @@
-// Catcher Device endpoints — API Contract v1.
+// VitaLink Device endpoints — API Contract v1.
 //
 //   POST /api/session/login     X-Device-Key            -> 200 { sessionToken, name }
 //   POST /api/readings          X-Device-Key + Bearer   -> 201 { ok: true }
@@ -63,7 +63,7 @@ function requireDeviceKey(req, res, next) {
 }
 
 // Rate limited per userCode, NOT per IP. Every request comes from the one
-// Catcher, so an IP limit would throttle the whole clinic the moment one person
+// VitaLink Device, so an IP limit would throttle the whole clinic the moment one person
 // fumbled a PIN. Per code, a 4-digit PIN's 10,000 combinations stop being
 // brute-forceable by someone standing at the keypad.
 const pinLimiter = rateLimit({

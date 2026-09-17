@@ -1,7 +1,7 @@
-# ArduinoMyHealth
+# VitaLink
 
 One Express process serving the REST API and the built React dashboard, backed
-by Turso (libSQL). Readings come from a single shared **Catcher Device**; each
+by Turso (libSQL). Readings come from a single shared **VitaLink Device**; each
 person authenticates at its keypad with a 6-digit User ID and a 4-digit PIN.
 
 ```
@@ -10,7 +10,7 @@ health-monitor/
 ├── db.js           libSQL client (Turso, or a local file for development)
 ├── schema.sql      CREATE TABLE IF NOT EXISTS, run on every boot
 ├── web/            Vite React dashboard (its own package.json)
-├── firmware/       Catcher Device sketch (ESP32) — see firmware/README.md
+├── firmware/       VitaLink Device sketch (ESP32) — see firmware/README.md
 └── .env.example
 ```
 
@@ -40,7 +40,7 @@ falls back to a SQLite file at `data/local.db` and creates the schema on boot.
 | Root directory | leave blank — `server.js` is at the repo root |
 | Build command | `npm install && cd web && npm install && npm run build` |
 | Start command | `node server.js` |
-| Region | Singapore — the only Asian region, closest to the Catcher and to Turso in Tokyo |
+| Region | Singapore — the only Asian region, closest to the VitaLink Device and to Turso in Tokyo |
 | Instance type | Free |
 
 Environment variables — all four, before the first deploy:
@@ -50,7 +50,7 @@ Environment variables — all four, before the first deploy:
 | `TURSO_DATABASE_URL` | Turso dashboard, `libsql://…` |
 | `TURSO_AUTH_TOKEN` | Turso dashboard |
 | `JWT_SECRET` | Any long random string; signs the browser session cookie |
-| `DEVICE_KEY` | Any long random string; also entered into the Catcher's WiFi portal |
+| `DEVICE_KEY` | Any long random string; also entered into the VitaLink Device's WiFi portal |
 
 Optional:
 
@@ -84,7 +84,7 @@ Do **not** set `PORT` — Render provides it.
 ### Free-tier notes
 
 - Render free services **sleep after ~15 minutes idle** and take up to a minute
-  to wake. The Catcher's 10-minute heartbeat keeps the service warm while the
+  to wake. The VitaLink Device's 10-minute heartbeat keeps the service warm while the
   device is powered — which matters because keypad login is a blocking network
   call, and a cold start in front of a panel is the demo failing. Open the site
   a few minutes before a defense in case the device has been off.
@@ -129,8 +129,8 @@ Two different things, and usually you only want the first:
 
 ## Status
 
-Done: the dashboard, the deploy skeleton, all website endpoints, all Catcher
-endpoints, the admin view, the seed and fake-device scripts, and Catcher Device
+Done: the dashboard, the deploy skeleton, all website endpoints, all VitaLink
+Device endpoints, the admin view, the seed and fake-device scripts, and VitaLink Device
 firmware v4. The frontend runs on the live API (`MOCK = false`), and the
 hardware has been verified end to end.
 
@@ -140,7 +140,7 @@ hardware has been verified end to end.
 # 30 days of plausible history for an existing account
 node --env-file-if-exists=.env scripts/seed.js --email you@example.com --days 30 --clear
 
-# a Catcher Device made of Node: keypad login, readings every 15s, heartbeat
+# a VitaLink Device made of Node: keypad login, readings every 15s, heartbeat
 node --env-file-if-exists=.env scripts/fake-device.js --code 622701 --pin 4821
 
 # delete an account and its readings — shows what it would remove and stops

@@ -152,7 +152,7 @@ export default function ReadingsChart({
           fill: 'start',
           tension: 0.25,
           // The whole reason this chart is trustworthy. buildSeries inserts a
-          // null y wherever the Catcher was silent, and spanGaps: false makes
+          // null y wherever the VitaLink Device was silent, and spanGaps: false makes
           // Chart.js break the line there instead of drawing a straight line
           // across hours of no readings.
           spanGaps: false,

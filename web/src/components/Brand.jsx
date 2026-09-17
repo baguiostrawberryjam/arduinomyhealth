@@ -1,4 +1,4 @@
-export default function Brand({ label = 'ArduinoMyHealth' }) {
+export default function Brand({ label = 'VitaLink' }) {
   return (
     <div className="brand">
       <span className="brand-mark" aria-hidden="true">

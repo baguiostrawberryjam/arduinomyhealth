@@ -1,7 +1,7 @@
 import { STATUS_LABEL } from '../constants.js';
 
 /**
- * Normal / Low / High, using the same thresholds the Catcher Device shows on its own
+ * Normal / Low / High, using the same thresholds the VitaLink Device shows on its own
  * screen. `status` is null when there is no reading to judge.
  */
 export default function StatusPill({ status }) {

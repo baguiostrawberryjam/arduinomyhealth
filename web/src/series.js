@@ -1,7 +1,7 @@
 // Turning raw readings into chart series.
 //
 // The data is bursts: a person holds a finger on the sensor for a few minutes
-// (a reading every ~15 s), then nobody uses the Catcher for hours. A line chart
+// (a reading every ~15 s), then nobody uses the VitaLink Device for hours. A line chart
 // fed those points naively draws a straight line across the empty hours, which
 // invents readings that were never taken. Every function here exists to stop
 // that happening.
@@ -55,7 +55,7 @@ function gapThreshold(times) {
  * Build one metric's series from thinned rows.
  *
  * Returns Chart.js {x, y} points with an explicit `{y: null}` inserted wherever
- * the Catcher was silent. With spanGaps left off, a null breaks the line, so the
+ * the VitaLink Device was silent. With spanGaps left off, a null breaks the line, so the
  * chart shows one segment per recording session and empty space in between.
  *
  * A session that survives thinning as a single point would draw no line at all

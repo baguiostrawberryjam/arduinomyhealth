@@ -1,11 +1,11 @@
 import { formatDateTime } from '../format.js';
 
 /**
- * Online/offline for the shared Catcher Device, straight from /api/me.
+ * Online/offline for the shared VitaLink Device, straight from /api/me.
  *
  * `deviceOnline` is computed on the server (last heartbeat within 15 minutes),
  * so the browser never does clock math and a wrong clock on the viewer's phone
- * cannot make a live Catcher look dead.
+ * cannot make a live VitaLink Device look dead.
  */
 export default function DeviceStatus({ online, lastSeenAt }) {
   return (
@@ -15,7 +15,7 @@ export default function DeviceStatus({ online, lastSeenAt }) {
     >
       <span className={`dot ${online ? 'dot-online' : 'dot-offline'}`} aria-hidden="true" />
       <span>
-        Catcher {online ? 'online' : 'offline'}
+        VitaLink Device {online ? 'online' : 'offline'}
         {!online && lastSeenAt && (
           <span className="sr-only"> — last seen {formatDateTime(lastSeenAt)}</span>
         )}

@@ -1,11 +1,11 @@
--- ArduinoMyHealth schema. Executed on every boot; every statement is
+-- VitaLink schema. Executed on every boot; every statement is
 -- IF NOT EXISTS, so booting against an existing database is a no-op.
 --
--- Three tables, per the shared-kiosk model: one Catcher Device used by many
+-- Three tables, per the shared-kiosk model: one VitaLink Device used by many
 -- people, each authenticating per session at the keypad.
 
 -- A person with a website account.
---   user_code       6 digits, typed at the Catcher keypad. A login identifier,
+--   user_code       6 digits, typed at the VitaLink Device keypad. A login identifier,
 --                   not a secret — you cannot type an email on a 4x4 keypad.
 --   device_pin_hash the 4-digit PIN, bcrypt-hashed. This is the secret.
 CREATE TABLE IF NOT EXISTS users (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS readings (
 -- this index that is a full table scan.
 CREATE INDEX IF NOT EXISTS idx_readings_user_time ON readings (user_id, recorded_at);
 
--- There is exactly one Catcher Device, so its liveness is a single row rather
+-- There is exactly one VitaLink Device, so its liveness is a single row rather
 -- than a table of devices. The CHECK enforces that.
 CREATE TABLE IF NOT EXISTS device_state (
   id           INTEGER PRIMARY KEY CHECK (id = 1),

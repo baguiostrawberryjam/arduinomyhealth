@@ -67,7 +67,7 @@ export async function requireAdmin(req, res, next) {
 
 adminRoutes.get('/admin/users', requireAuth, requireAdmin, async (req, res, next) => {
   try {
-    // LEFT JOIN, so an account that has never used the Catcher still appears —
+    // LEFT JOIN, so an account that has never used the VitaLink Device still appears —
     // "registered but has taken no readings" is exactly what an admin needs to
     // see, and an inner join would hide it.
     const result = await db.execute(`

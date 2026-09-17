@@ -1,9 +1,9 @@
 {
-  "name": "arduinomyhealth",
+  "name": "vitalink",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "ArduinoMyHealth \u2014 API and dashboard for the Catcher Device",
+  "description": "VitaLink \u2014 API and dashboard for the VitaLink Device",
   "engines": {
     "node": ">=20 <27"
   },

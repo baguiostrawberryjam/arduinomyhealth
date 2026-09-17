@@ -1,4 +1,4 @@
-/* ArduinoMyHealth — hand-written CSS. No framework.
+/* VitaLink — hand-written CSS. No framework.
 
    Two palettes, one set of names. Every colour in the app is a custom property
    defined twice below, once per theme, selected by data-theme on <html>. No
@@ -1348,7 +1348,7 @@ table.readings tbody tr:hover td {
   vertical-align: 1px;
 }
 
-/* The identity panel that replaces the Catcher instructions when an admin is
+/* The identity panel that replaces the VitaLink Device instructions when an admin is
    looking at someone else's dashboard. */
 .account-facts {
   display: grid;

@@ -1,4 +1,4 @@
-// A Catcher Device made of Node.
+// A VitaLink Device made of Node.
 //
 //   node scripts/fake-device.js --code 622701 --pin 4821 [--url http://localhost:3000]
 //                               [--interval 15] [--session 5]
@@ -96,7 +96,7 @@ async function maybeHeartbeat() {
   console.log(`  heartbeat -> ${res.status}`);
 }
 
-console.log(`fake Catcher Device -> ${BASE}`);
+console.log(`fake VitaLink Device -> ${BASE}`);
 console.log(`  user ${userCode}, reading every ${intervalSec}s, ${sessionMin} min per session\n`);
 
 let stopping = false;

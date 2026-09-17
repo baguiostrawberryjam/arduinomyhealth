@@ -1,4 +1,4 @@
-# ArduinoMyHealth — frontend
+# VitaLink — frontend
 
 React + Vite, per **API Contract v1**. It now runs against the live API; the
 mock fixtures in `src/mock.js` remain so the whole app can be worked on with no
@@ -60,7 +60,7 @@ naively draws a straight line across the empty hours, inventing readings that
 were never taken.
 
 `series.js` prevents that by inserting an explicit `{y: null}` wherever the
-Catcher was silent, with `spanGaps: false` on the dataset. The gap threshold is
+VitaLink Device was silent, with `spanGaps: false` on the dataset. The gap threshold is
 derived from the series' own median spacing rather than hardcoded, because
 thinning changes that spacing between ranges (nothing is dropped at 24h; roughly
 one row in ten survives at 30d).

@@ -24,7 +24,7 @@ const TABS = [
  *
  * `viewUser` is the admin case: the same page, reading somebody else's data.
  * Everything below is unchanged by it except whose readings are fetched, the
- * heading, and the "how to use the Catcher" panel — which is written in the
+ * heading, and the "how to use the VitaLink Device" panel — which is written in the
  * second person and belongs to the person it is about, not to an admin
  * looking in.
  */
@@ -111,7 +111,7 @@ export default function Dashboard({ me, onLogout, viewUser = null }) {
             </h2>
             <p className="section-sub">
               The most recent measurement in the last {rangeLabel}, against the same limits the
-              Catcher Device uses.
+              VitaLink Device uses.
             </p>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function Dashboard({ me, onLogout, viewUser = null }) {
       <section className="section" aria-labelledby="device-heading">
         <div className="section-head">
           <h2 className="section-title" id="device-heading">
-            {viewUser ? 'Account' : 'Using the Catcher Device'}
+            {viewUser ? 'Account' : 'Using the VitaLink Device'}
           </h2>
         </div>
         {viewUser ? (

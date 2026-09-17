@@ -17,7 +17,7 @@ export const IS_PRODUCTION =
 const COOKIE_NAME = 'session';
 const MAX_AGE_DAYS = 7;
 
-// Both the browser cookie and the Catcher's session token are JWTs signed with
+// Both the browser cookie and the VitaLink Device's session token are JWTs signed with
 // the same secret, so each one states what it is and every reader checks.
 // Without this, a 15-minute keypad token pasted into a cookie would be accepted
 // as a 7-day browser login, and vice versa.
@@ -90,7 +90,7 @@ export function requireAuth(req, res, next) {
 // --------------------------------------------------------------- device ----
 
 /**
- * Mint the token the Catcher holds in RAM while one person is measuring.
+ * Mint the token the VitaLink Device holds in RAM while one person is measuring.
  *
  * Short-lived by design. It lives only in RAM on the device, so a power cut logs
  * everyone out — the correct behaviour for a shared medical terminal, and the

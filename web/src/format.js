@@ -1,6 +1,6 @@
 // Timestamp and CSV formatting. No date library — Intl does all of this.
 // Readings are stored in UTC and always displayed in Manila local time, so the
-// displayed time matches the clock on the wall next to the Catcher Device.
+// displayed time matches the clock on the wall next to the VitaLink Device.
 
 const TZ = { timeZone: 'Asia/Manila' };
 const LOCALE = 'en-PH';

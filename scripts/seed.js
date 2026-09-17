@@ -1,12 +1,12 @@
 // Seed a user with plausible history, straight into the database.
 //
-//   node scripts/seed.js --email demo@arduinomyhealth.com [--days 30] [--clear]
+//   node scripts/seed.js --email demo@vitalink.ph [--days 30] [--clear]
 //
 // You cannot demo a 30-day graph with a device that has been running for an
 // afternoon, and waiting for real readings to accumulate would gate every chart
 // and table on hardware. This writes what a month of use looks like.
 //
-// Shape matters more than volume. The Catcher only transmits while a finger is
+// Shape matters more than volume. The VitaLink Device only transmits while a finger is
 // on the sensor, so real data is short bursts separated by long silence — the
 // thing that breaks a chart which interpolates across gaps. Smooth fake data
 // would hide that until the hardware was connected.

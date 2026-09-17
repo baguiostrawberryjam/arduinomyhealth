@@ -24,7 +24,7 @@ export const authRoutes = Router();
 // point where an offline attack on a stolen hash is impractical here.
 const BCRYPT_ROUNDS = 10;
 
-/** device_state.last_seen_at within this window means the Catcher is online. */
+/** device_state.last_seen_at within this window means the VitaLink Device is online. */
 const DEVICE_ONLINE_WINDOW_MS = 15 * 60_000;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,7 +38,7 @@ const DUMMY_HASH = bcrypt.hashSync('no user matched this login', BCRYPT_ROUNDS);
 
 // A 4-digit PIN is 10,000 combinations and a password can be guessed too.
 // Per-IP here; the keypad endpoint needs per-userCode instead, because every
-// request from the Catcher shares one IP.
+// request from the VitaLink Device shares one IP.
 const authLimiter = rateLimit({
   windowMs: 15 * 60_000,
   limit: 30,
@@ -157,7 +157,7 @@ authRoutes.get('/me', requireAuth, async (req, res, next) => {
 
     const lastSeenAt = device.rows[0]?.last_seen_at ?? null;
     // Computed here, never in the browser: a viewer's phone with a wrong clock
-    // must not be able to make a live Catcher look dead.
+    // must not be able to make a live VitaLink Device look dead.
     const deviceOnline =
       Boolean(lastSeenAt) && Date.now() - new Date(lastSeenAt).getTime() < DEVICE_ONLINE_WINDOW_MS;
 

@@ -2,7 +2,7 @@
 //
 // LAYOUT decides how the dashboard is arranged:
 //
-//   'tabs'   Overview (latest reading + Catcher guide) and Trends & Readings
+//   'tabs'   Overview (latest reading + VitaLink Device guide) and Trends & Readings
 //            (charts + table) as two tabs, so neither view needs much scrolling.
 //   'single' Everything on one scrolling page, the original layout.
 //

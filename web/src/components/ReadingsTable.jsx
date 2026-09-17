@@ -53,7 +53,7 @@ export default function ReadingsTable({ rows, loading }) {
         <div className="empty">
           <p className="empty-title">No readings yet</p>
           <p className="empty-body">
-            Readings appear here as soon as you take them at the Catcher Device. Nothing is recorded while
+            Readings appear here as soon as you take them at the VitaLink Device. Nothing is recorded while
             nobody is using it, so your history stays clean.
           </p>
         </div>
