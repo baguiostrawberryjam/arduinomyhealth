@@ -11,7 +11,7 @@
 // For a quick look without an edit, append ?theme=dark (or ?theme=light) to the
 // URL; that overrides the constant for that page load only.
 
-export const THEME = 'light'; // 'light' | 'dark'
+export const THEME = 'dark'; // 'light' | 'dark'
 
 export function resolveTheme() {
   const requested = new URLSearchParams(window.location.search).get('theme');
